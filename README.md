@@ -1,13 +1,11 @@
 # Use Your VPN around the clock
 
-> 原名 Universal Split Routing（USR），配置中的 USR 标识保留以兼容现有安装。
->
 > 一个规则源，多种客户端：🇨🇳 中国大陆服务直连，🌍 国际服务使用自己的代理节点。
 
 ** 配置已通过自动化静态检查，但尚未在所有客户端和设备版本上进行真机测试。欢迎反馈兼容性问题。
 
 > [!IMPORTANT]
-> 这不是“一个 `.conf` 文件适配全平台”。不同客户端需要不同的输出文件，项目用 [`config/routing.json`](config/routing.json) **统一维护规则意图**，由脚本生成对应格式。
+> 本项目旨在省去来回切换内地软件开关VPN麻烦,全天候不关闭也能正常使用内地软件
 
 **iOS 新用户：先看 [Shadowrocket 教程](docs/IOS.md)。**
 
