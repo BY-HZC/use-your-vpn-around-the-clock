@@ -7,9 +7,9 @@
 > [!IMPORTANT]
 > 本项目旨在省去来回切换内地软件开关VPN麻烦,全天候不关闭也能正常使用内地软件
 
-**iOS 新用户：先看 [Shadowrocket 教程](docs/IOS.md)。**
+**iOS 用户：先看 [Shadowrocket 教程](docs/IOS.md)。**
 
-**Android 新用户：推荐先看 [Android FlClash 图文步骤与排错](docs/ANDROID.md)，使用 [`dist/flclash-override.js`](dist/flclash-override.js) 给自己的订阅添加分流。**
+**Android 用户：推荐先看 [Android FlClash 图文步骤与排错](docs/ANDROID.md)，使用 [`dist/flclash-override.js`](dist/flclash-override.js) 给自己的订阅添加分流。**
 
 ## 下载安装
 
