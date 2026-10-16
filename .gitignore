@@ -1,0 +1,10 @@
+__pycache__/
+*.py[cod]
+.DS_Store
+.venv/
+*.log
+# Never publish local private or customized files
+*.private.yaml
+*.private.yml
+*.private.conf
+secrets/

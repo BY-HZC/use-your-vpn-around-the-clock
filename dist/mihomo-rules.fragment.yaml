@@ -1,0 +1,94 @@
+# Use Your VPN around the clock | GENERATED FILE - DO NOT EDIT
+# Source of truth: config/routing.json
+# Matches in order; unmatched traffic uses PROXY.
+# FRAGMENT ONLY, NOT AN IMPORTABLE STANDALONE CONFIG.
+# Merge these keys into an existing Mihomo config with a group named PROXY.
+# Preserve provider names and rules order; do not create duplicate YAML keys.
+
+rule-providers:
+  china-classical:
+    type: http
+    behavior: classical
+    format: yaml
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/China/China_Classical.yaml"
+    path: ./ruleset/china-classical.yaml
+    interval: 86400
+
+rules:
+  # Local / private IP addresses
+  - "IP-CIDR,127.0.0.0/8,DIRECT,no-resolve"
+  - "IP-CIDR,10.0.0.0/8,DIRECT,no-resolve"
+  - "IP-CIDR,172.16.0.0/12,DIRECT,no-resolve"
+  - "IP-CIDR,192.168.0.0/16,DIRECT,no-resolve"
+  - "IP-CIDR,169.254.0.0/16,DIRECT,no-resolve"
+  - "IP-CIDR6,::1/128,DIRECT,no-resolve"
+  - "IP-CIDR6,fc00::/7,DIRECT,no-resolve"
+  - "IP-CIDR6,fe80::/10,DIRECT,no-resolve"
+  # Explicit international services
+  - "DOMAIN-SUFFIX,openai.com,PROXY"
+  - "DOMAIN-SUFFIX,chatgpt.com,PROXY"
+  - "DOMAIN-SUFFIX,oaistatic.com,PROXY"
+  - "DOMAIN-SUFFIX,oaiusercontent.com,PROXY"
+  - "DOMAIN-SUFFIX,google.com,PROXY"
+  - "DOMAIN-SUFFIX,googleapis.com,PROXY"
+  - "DOMAIN-SUFFIX,gstatic.com,PROXY"
+  - "DOMAIN-SUFFIX,youtube.com,PROXY"
+  - "DOMAIN-SUFFIX,googlevideo.com,PROXY"
+  - "DOMAIN-SUFFIX,ytimg.com,PROXY"
+  - "DOMAIN-SUFFIX,instagram.com,PROXY"
+  - "DOMAIN-SUFFIX,facebook.com,PROXY"
+  - "DOMAIN-SUFFIX,fbcdn.net,PROXY"
+  - "DOMAIN-SUFFIX,x.com,PROXY"
+  - "DOMAIN-SUFFIX,twitter.com,PROXY"
+  - "DOMAIN-SUFFIX,twimg.com,PROXY"
+  - "DOMAIN-SUFFIX,t.co,PROXY"
+  - "DOMAIN-SUFFIX,github.com,PROXY"
+  - "DOMAIN-SUFFIX,githubusercontent.com,PROXY"
+  - "DOMAIN-SUFFIX,githubassets.com,PROXY"
+  - "DOMAIN-SUFFIX,spotify.com,PROXY"
+  - "DOMAIN-SUFFIX,scdn.co,PROXY"
+  - "DOMAIN-SUFFIX,discord.com,PROXY"
+  - "DOMAIN-SUFFIX,discord.gg,PROXY"
+  - "DOMAIN-SUFFIX,discordapp.com,PROXY"
+  - "DOMAIN-SUFFIX,telegram.org,PROXY"
+  - "DOMAIN-SUFFIX,t.me,PROXY"
+  # Explicit mainland services
+  - "DOMAIN-SUFFIX,qq.com,DIRECT"
+  - "DOMAIN-SUFFIX,weixin.qq.com,DIRECT"
+  - "DOMAIN-SUFFIX,weixin.com,DIRECT"
+  - "DOMAIN-SUFFIX,wechat.com,DIRECT"
+  - "DOMAIN-SUFFIX,tenpay.com,DIRECT"
+  - "DOMAIN-SUFFIX,alipay.com,DIRECT"
+  - "DOMAIN-SUFFIX,alipayobjects.com,DIRECT"
+  - "DOMAIN-SUFFIX,taobao.com,DIRECT"
+  - "DOMAIN-SUFFIX,tmall.com,DIRECT"
+  - "DOMAIN-SUFFIX,alicdn.com,DIRECT"
+  - "DOMAIN-SUFFIX,bilibili.com,DIRECT"
+  - "DOMAIN-SUFFIX,bilivideo.com,DIRECT"
+  - "DOMAIN-SUFFIX,biliapi.com,DIRECT"
+  - "DOMAIN-SUFFIX,hdslb.com,DIRECT"
+  - "DOMAIN-SUFFIX,douyin.com,DIRECT"
+  - "DOMAIN-SUFFIX,douyincdn.com,DIRECT"
+  - "DOMAIN-SUFFIX,bytedance.com,DIRECT"
+  - "DOMAIN-SUFFIX,xiaohongshu.com,DIRECT"
+  - "DOMAIN-SUFFIX,xhscdn.com,DIRECT"
+  - "DOMAIN-SUFFIX,jd.com,DIRECT"
+  - "DOMAIN-SUFFIX,360buyimg.com,DIRECT"
+  - "DOMAIN-SUFFIX,meituan.com,DIRECT"
+  - "DOMAIN-SUFFIX,meituan.net,DIRECT"
+  - "DOMAIN-SUFFIX,dianping.com,DIRECT"
+  - "DOMAIN-SUFFIX,12306.cn,DIRECT"
+  - "DOMAIN-SUFFIX,zhihu.com,DIRECT"
+  - "DOMAIN-SUFFIX,zhimg.com,DIRECT"
+  - "DOMAIN-SUFFIX,baidu.com,DIRECT"
+  - "DOMAIN-SUFFIX,bdstatic.com,DIRECT"
+  - "DOMAIN-SUFFIX,netease.com,DIRECT"
+  - "DOMAIN-SUFFIX,163.com,DIRECT"
+  - "DOMAIN-SUFFIX,126.com,DIRECT"
+  - "DOMAIN-SUFFIX,youku.com,DIRECT"
+  - "DOMAIN-SUFFIX,iqiyi.com,DIRECT"
+  # The maintained upstream rule-provider
+  - "RULE-SET,china-classical,DIRECT"
+  - "DOMAIN-SUFFIX,cn,DIRECT"
+  - "GEOIP,CN,DIRECT"
+  - "MATCH,PROXY"
