@@ -94,26 +94,6 @@ python3 -m unittest discover -s tests -v
 
 **上游规则会自行更新：** Mihomo 的 `rule-providers` 每 86400 秒尝试更新一次；Shadowrocket 的下载/刷新由应用自己的规则集管理机制决定。修改自定义规则源则需要重新执行生成器、提交新文件。
 
-## 想把这个仓库公开发布？
-
-详见 [维护者发布指南](docs/PUBLISHING.md)。
-
-1. 在 GitHub 创建公开仓库，建议仓库名 `use-your-vpn-around-the-clock`，初始化时**不要**勾选添加 README、`.gitignore` 或 license（本包已包含）。
-2. 解压本 ZIP，把项目根目录的**所有文件及隐藏的 `.github` 目录**上传到新仓库。
-3. 创建仓库后，在 `dist/shadowrocket.conf` 页面复制 GitHub 提供的 **Raw** URL 对外分享，不要自己手打可能错误的仓库地址。
-4. 同时分享 `README.md`；Android / 桌面用户按说明编辑自己的 Mihomo 配置。
-5. 保持 `.github/workflows/check.yml` 启用，检查提交后生成文件是否仍一致。
-
-如果已经有 GitHub CLI，也可以在项目根目录运行：
-
-```bash
-git init
-git add .
-git commit -m "Initial release: cross-platform split routing"
-gh repo create use-your-vpn-around-the-clock --public --source=. --remote=origin --push
-```
-
-GitHub CLI 命令需要用户自行登录授权；若同名仓库已存在，应先审查其内容和历史，避免覆盖无关项目。请先检查要公开的文件中没有个人订阅、私钥、令牌。
 
 ## 隐私与安全
 
