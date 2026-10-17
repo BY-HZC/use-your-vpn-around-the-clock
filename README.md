@@ -20,7 +20,7 @@
 | iPhone / iPad：Shadowrocket | [`dist/shadowrocket.conf`](dist/shadowrocket.conf) | 初版，可导入 | 保留自己的节点/订阅；首页选择节点；路由选择「配置」 |
 | Android：FlClash 覆写脚本（推荐） | [`dist/flclash-override.js`](dist/flclash-override.js) | 预览版（保留原订阅节点） | 导入原订阅，粘贴脚本，配置 → 更多 → 覆写 → 脚本，具体参见 [教程](docs/ANDROID.md) |
 | Android：FlClash 完整模板（高级） | [`dist/android-flclash-template.yaml`](dist/android-flclash-template.yaml) | 模板（需私密订阅 URL） | 下载后仅在个人设备填写订阅地址，勿公开上传 |
-| Windows / macOS：Clash Verge Rev 最新稳定版 | [`dist/clash-verge-rev-override.js`](dist/clash-verge-rev-override.js) | 预览版，待真机验证 | 保留原订阅；编辑订阅扩展脚本；应用中选择规则模式，参见 [桌面教程](docs/DESKTOP.md) |
+| Windows / macOS：Clash Verge Rev 最新稳定版 | [`dist/clash-verge-rev-override.js`](dist/clash-verge-rev-override.js) | 预览版 | 保留原订阅；编辑订阅扩展脚本；应用中选择规则模式，参见 [桌面教程](docs/DESKTOP.md) |
 | Android：Mihomo 内核客户端 | [`dist/mihomo.yaml`](dist/mihomo.yaml) | 模板 | **先用自己的 Mihomo 兼容订阅地址替换示例地址**；再导入 |
 | Linux / 其他 Mihomo 客户端（高级模板） | [`dist/mihomo.yaml`](dist/mihomo.yaml) | 模板 | 同上；按客户端提示开启系统代理或 TUN |
 | 已有 Mihomo 配置，希望只添加规则 | [`dist/mihomo-rules.fragment.yaml`](dist/mihomo-rules.fragment.yaml) | **规则片段，不能单独导入** | 手动合并 `rule-providers`、`rules`，确保存在 `PROXY` 组 |
