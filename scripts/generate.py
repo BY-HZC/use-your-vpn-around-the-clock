@@ -9,7 +9,7 @@ from pathlib import Path
 import re
 import sys
 
-from generate_android import flclash_script, android_template
+from generate_android import flclash_script, android_template, clash_verge_script
 
 ROOT = Path(__file__).resolve().parent.parent
 SRC = ROOT / "config" / "routing.json"
@@ -160,6 +160,7 @@ def build(cfg):
         DIST / 'mihomo.yaml': mihomo(cfg),
         DIST / 'mihomo-rules.fragment.yaml': mihomo(cfg, fragment=True),
         DIST / 'flclash-override.js': flclash_script(cfg),
+        DIST / 'clash-verge-rev-override.js': clash_verge_script(cfg),
         DIST / 'android-flclash-template.yaml': android_template(cfg, mihomo),
     }
 

@@ -10,6 +10,7 @@ EXPECTED = [
     'dist/mihomo-rules.fragment.yaml', 'docs/IOS.md', 'docs/ANDROID.md',
     'docs/PUBLISHING.md', 'docs/TESTING.md', '.github/workflows/check.yml',
     'AGENTS.md', 'README.md', 'LICENSE', 'CHANGELOG.md',
+    'dist/clash-verge-rev-override.js', 'docs/DESKTOP.md',
 ]
 # Intentional narrow heuristic: CI is not a replacement for a manual security review.
 SECRET_PATTERNS = [

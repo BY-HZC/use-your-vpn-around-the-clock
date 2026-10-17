@@ -88,3 +88,23 @@ def android_template(cfg, mihomo_function):
         '# Replace YOUR_PRIVATE_SUBSCRIPTION_URL with your own Mihomo-compatible provider URL.',
         '# Beginners: use flclash-override.js instead; it does not need a private URL.\n'
         '# Replace YOUR_PRIVATE_SUBSCRIPTION_URL with your own Mihomo-compatible provider URL.', 1)
+
+
+def clash_verge_script(cfg):
+    """Use the shared routing engine through Clash Verge Rev's main(config) API."""
+    content = flclash_script(cfg)
+    start = content.index('const USR_RULES =')
+    content = content[start:]
+    content = content.replace('  let target = preferred.find(n => names.includes(n));',
+        '  if (USR_PROXY_GROUP && !names.includes(USR_PROXY_GROUP)) {\n'
+        '    throw new Error("USR: 指定的代理组不存在: " + USR_PROXY_GROUP);\n'
+        '  }\n'
+        '  let target = USR_PROXY_GROUP || preferred.find(n => names.includes(n));')
+    # Clash Verge Rev owns mode; the user selects Rule mode in its UI.
+    content = content.replace('  config.mode = "rule";\n', '')
+    return ('// Use Your VPN around the clock - Clash Verge Rev (Windows / macOS)\n'
+            '// GENERATED FILE. Source: config/routing.json.\n'
+            '// Paste into the subscription extension script; see docs/DESKTOP.md.\n'
+            '// Replaces original rules; preserves nodes, groups, DNS and TUN settings.\n'
+            '// Select Rule mode in the app. Optional: set an exact proxy group below.\n'
+            'const USR_PROXY_GROUP = "";\n\n' + content)

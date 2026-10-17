@@ -1,6 +1,6 @@
 # 维护者发布指南（GitHub）
 
-此仓库已经整理好 iOS + Android 公开发布文件。发布前请先在本地审查。
+此仓库已经整理好 iOS + Android + Windows / macOS 公开发布文件。发布前请先在本地审查。
 
 ## 文件分类
 
@@ -8,6 +8,8 @@
 | --- | --- | --- |
 | 统一规则源 | `config/routing.json` | 是 |
 | iOS 配置 | `dist/shadowrocket.conf` | 是 |
+| 桌面 Clash Verge Rev 扩展 | `dist/clash-verge-rev-override.js` | 是 |
+| 桌面教程 | `docs/DESKTOP.md` | 是 |
 | Android FlClash 覆写 | `dist/flclash-override.js` | 是 |
 | Android Mihomo 模板 | `dist/android-flclash-template.yaml` | 是，**仅示例 URL** |
 | 通用 Mihomo 模板 | `dist/mihomo.yaml` | 是，**仅示例 URL** |

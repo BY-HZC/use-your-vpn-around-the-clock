@@ -2,7 +2,7 @@
 
 > 一个规则源，多种客户端：🇨🇳 中国大陆服务直连，🌍 国际服务使用自己的代理节点。
 
-** 配置已通过自动化静态检查，但尚未在所有客户端和设备版本上进行真机测试。欢迎反馈兼容性问题。
+配置已通过自动化静态检查，但尚未在所有客户端和设备版本上进行真机测试。欢迎反馈兼容性问题。
 
 > [!IMPORTANT]
 > 本项目旨在省去来回切换内地软件开关VPN麻烦,全天候不关闭也能正常使用内地软件
@@ -11,6 +11,8 @@
 
 **Android 用户：推荐先看 [Android FlClash 图文步骤与排错](docs/ANDROID.md)，使用 [`dist/flclash-override.js`](dist/flclash-override.js) 给自己的订阅添加分流。**
 
+**Windows / macOS：使用 [Clash Verge Rev 桌面教程](docs/DESKTOP.md) 和 [订阅扩展脚本](dist/clash-verge-rev-override.js)。桌面适配为预览版，尚待真机验证。**
+
 ## 下载安装
 
 | 客户端 | 文件 | 状态 | 你还需要做什么 |
@@ -18,8 +20,9 @@
 | iPhone / iPad：Shadowrocket | [`dist/shadowrocket.conf`](dist/shadowrocket.conf) | 初版，可导入 | 保留自己的节点/订阅；首页选择节点；路由选择「配置」 |
 | Android：FlClash 覆写脚本（推荐） | [`dist/flclash-override.js`](dist/flclash-override.js) | 预览版（保留原订阅节点） | 导入原订阅，粘贴脚本，配置 → 更多 → 覆写 → 脚本，具体参见 [教程](docs/ANDROID.md) |
 | Android：FlClash 完整模板（高级） | [`dist/android-flclash-template.yaml`](dist/android-flclash-template.yaml) | 模板（需私密订阅 URL） | 下载后仅在个人设备填写订阅地址，勿公开上传 |
+| Windows / macOS：Clash Verge Rev 最新稳定版 | [`dist/clash-verge-rev-override.js`](dist/clash-verge-rev-override.js) | 预览版，待真机验证 | 保留原订阅；编辑订阅扩展脚本；应用中选择规则模式，参见 [桌面教程](docs/DESKTOP.md) |
 | Android：Mihomo 内核客户端 | [`dist/mihomo.yaml`](dist/mihomo.yaml) | 模板 | **先用自己的 Mihomo 兼容订阅地址替换示例地址**；再导入 |
-| Windows / macOS / Linux：Mihomo 内核客户端 | [`dist/mihomo.yaml`](dist/mihomo.yaml) | 模板 | 同上；按客户端提示开启系统代理或 TUN |
+| Linux / 其他 Mihomo 客户端（高级模板） | [`dist/mihomo.yaml`](dist/mihomo.yaml) | 模板 | 同上；按客户端提示开启系统代理或 TUN |
 | 已有 Mihomo 配置，希望只添加规则 | [`dist/mihomo-rules.fragment.yaml`](dist/mihomo-rules.fragment.yaml) | **规则片段，不能单独导入** | 手动合并 `rule-providers`、`rules`，确保存在 `PROXY` 组 |
 | Stash / Surge / Loon / Quantumult X / v2rayNG / sing-box | — | 暂未适配 | 不要直接导入其他格式；欢迎提交适配 PR |
 
@@ -35,7 +38,16 @@
 4. 配置里的第三方 `China.list`、`China_Domain.list` 需要下载成功；可以在「配置 → 编辑配置 → 规则集 URL」查看。
 5. 「数据 → 连接记录」中检查国内服务是否显示 `DIRECT`，国际服务是否显示 `PROXY`。
 
-### Android / Windows / macOS / Linux：Mihomo
+### Windows / macOS：Clash Verge Rev
+
+1. 从 [官方最新稳定版](https://github.com/clash-verge-rev/clash-verge-rev/releases/latest) 安装适合设备架构的客户端，先导入并验证自己的订阅。
+2. 将 [`dist/clash-verge-rev-override.js`](dist/clash-verge-rev-override.js) 全文粘贴到当前订阅的扩展脚本中；保存并应用。
+3. 在客户端选择「规则」模式和可用代理节点，按需开启系统代理或 TUN。
+4. 查看最终规则和连接记录：国内 DIRECT，指定国际服务及未匹配流量指向所选代理组。
+
+脚本会替换原订阅的路由规则（含广告过滤等），保留节点、已有代理组和 DNS / TUN 字段。客户端自身设置优先级及后续扩展仍可能影响最终配置。详细导入、更新、恢复方法见 [桌面教程](docs/DESKTOP.md)。此适配针对 Clash Verge Rev，不承诺原版 Clash、Clash for Windows 或 ClashX 兼容。
+
+### 其他 Mihomo 客户端：高级模板
 
 1. 下载 [`dist/mihomo.yaml`](dist/mihomo.yaml)，**先在本地编辑**：将 `https://example.invalid/YOUR_PRIVATE_SUBSCRIPTION_URL` 换成自己真实的、**兼容 Mihomo proxy-provider 格式**的订阅链接。
 2. 不要将编辑后的文件（含个人订阅 token）上传至公开 GitHub 仓库，也不要在公开 Issue 里粘贴它。
@@ -67,6 +79,8 @@ dist/mihomo.yaml                  # Mihomo 完整模板（需填自己的订阅�
 dist/mihomo-rules.fragment.yaml    # Mihomo 规则片段（需合并）
 dist/flclash-override.js          # 推荐 Android：覆写自己的订阅
 dist/android-flclash-template.yaml # Android 完整 YAML 模板
+dist/clash-verge-rev-override.js   # Windows / macOS：Clash Verge Rev 扩展脚本
+docs/DESKTOP.md                   # Windows / macOS 中文教程
 docs/ANDROID.md                   # Android 中文使用教程
 docs/IOS.md                       # iOS 中文使用教程
 docs/PUBLISHING.md                # GitHub 维护者发布指南

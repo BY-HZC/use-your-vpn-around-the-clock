@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Windows / macOS 适配 Clash Verge Rev 最新稳定版的订阅扩展脚本接口。
+- 添加桌面导入、规则验证、更新与恢复教程，保留通用 Mihomo 模板。
+- 新增桌面脚本模拟测试；本版本仍需 Windows / macOS 真机验证。
+
 ## v0.3.0-beta.1 (release preparation)
 
 - 项目命名为 Use Your VPN around the clock，保留 USR 配置标识。

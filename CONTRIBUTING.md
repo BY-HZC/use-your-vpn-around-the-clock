@@ -8,4 +8,4 @@
 4. Pull Request 描述需包括域名归属、为什么走直连或代理、测试设备与日志截图（记得遮盖 IP、用户名、订阅 token）。
 5. 不得提交任何个人订阅链接、密钥、账号、设备标识符等敏感信息。
 
-目前仅支持 Shadowrocket 与 Mihomo 输出。新客户端支持请在 PR 中附上其官方语法资料和测试记录。
+目前支持 Shadowrocket、FlClash 和 Clash Verge Rev 扩展脚本，以及通用 Mihomo 模板输出。新客户端支持请在 PR 中附上其官方语法资料和测试记录。
