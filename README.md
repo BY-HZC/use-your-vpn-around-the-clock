@@ -2,10 +2,12 @@
 
 > 一个规则源，多种客户端：🇨🇳 中国大陆服务直连，🌍 国际服务使用自己的代理节点。
 
-配置已通过自动化静态检查，但尚未在所有客户端和设备版本上进行真机测试。欢迎反馈兼容性问题。
+**v0.4.0-beta.1 · Seamless Routing（社区预览版）**
+
+目标是保持 VPN 连接，在微信、QQ、哔哩哔哩、淘宝、支付宝与 ChatGPT、YouTube、Google、GitHub 之间连续切换。规则自动决定国内直连或国际代理，无需为每个 App 反复关闭 VPN。需要先有可用订阅并启用规则模式；本项目不提供节点、测速或自动切换节点。已有 iOS 连接记录显示微信相关域名和 CN IP 直连、ChatGPT/Google 代理及代理兜底，维护者反馈当前使用正常；配置版本未独立核对，完整验证范围见 [测试记录](docs/TESTING.md)。静态与模拟测试通过不代表各平台真机通过。
 
 > [!IMPORTANT]
-> 本项目旨在省去来回切换内地软件开关VPN麻烦,全天候不关闭也能正常使用内地软件
+> 持续连接依赖客户端接管、节点和本地网络正常；本项目负责分流策略，不承诺所有 App、DNS、IPv6 或 UDP 在每种网络下都可用。
 
 **iOS 用户：先看 [Shadowrocket 教程](docs/IOS.md)。**
 
@@ -57,6 +59,20 @@
 
 **注意：** 机场提供的通用订阅链接未必是 Mihomo 兼容格式；如仅提供专有格式，需要先从服务商取得适合 Mihomo 的订阅。示例 URL 的 `.invalid` 域名故意无法连接，防止误用。
 
+## 正确选择代理组
+
+Android 与桌面脚本都提供 `const USR_PROXY_GROUP = "";`。留空时仅在有一个合格候选组时自动选择；广告/拒绝/仅直连组、静态空组和没有代理出口的组会排除。出现多个候选时，按错误提示在本地脚本中填写准确组名，例如 `const USR_PROXY_GROUP = "🌐 Global";`，保存并重新应用。
+
+候选判断依据节点/提供者引用，不依据“PROXY”名称猜测优先级。动态提供者和过滤器的最终结果仍需在客户端核对；代理组包含 DIRECT 时，请确认当前选中真实节点。原订阅节点、代理提供者和已有代理组保留，但原 `rules`（含广告过滤等）会被替换。恢复步骤见各平台教程。
+
+## DNS 与连接验证
+
+默认保留原订阅 DNS/TUN；Shadowrocket 仍使用 system。需要排查 DNS 时先看 [DNS 指南](docs/DNS.md)，可选 [Mihomo DNS 示例](dist/mihomo-dns.optional.yaml) 不会自动应用，不能独立导入。
+
+在连接页核对：国内域名/IP 应命中 DIRECT，指定国际域名和未知流量应指向代理组且最终使用代理节点。国际域名规则优先于 China 规则集和 CN GeoIP，但私有地址规则仍排在最前。只看到网页能打开，无法证明分流正确；完整场景见 [测试清单](docs/TESTING.md)。
+
+规则覆盖与边界见 [分流审查记录](docs/ROUTING.md)。
+
 ## 分流优先级
 
 1. 内网 IPv4 / IPv6 及本地地址 → `DIRECT`
@@ -74,6 +90,8 @@
 ```text
 config/routing.json                 # 唯一的自定义规则源
 scripts/generate.py                # Python 标准库生成器
+scripts/check_mihomo.py            # 可选内核解析检查（合成节点）
+dist/mihomo-dns.optional.yaml      # 可选 DNS 片段，先看 docs/DNS.md
 dist/shadowrocket.conf             # Shadowrocket 配置
 dist/mihomo.yaml                  # Mihomo 完整模板（需填自己的订阅）
 dist/mihomo-rules.fragment.yaml    # Mihomo 规则片段（需合并）
@@ -102,7 +120,7 @@ python3 scripts/generate.py --check
 python3 -m unittest discover -s tests -v
 ```
 
-生成器只依赖 Python 3.10+ 的标准库；自动化 CI 额外使用 PyYAML 检查生成文件能否被 YAML 解析。
+生成器只依赖 Python 3.10+ 标准库。完整测试需 Node.js 与 PyYAML（CI 已安装）；缺少依赖时相关检查会跳过，不能据此认定全部检查通过。内核检查方式见 [TESTING.md](docs/TESTING.md)。
 
 **上游规则会自行更新：** Mihomo 的 `rule-providers` 每 86400 秒尝试更新一次；Shadowrocket 的下载/刷新由应用自己的规则集管理机制决定。修改自定义规则源则需要重新执行生成器、提交新文件。
 

@@ -1,0 +1,80 @@
+# GENERATED optional Mihomo DNS fragment; NOT a standalone profile.
+# Read docs/DNS.md before merging. Mainland-network example, device testing required.
+# Requires an existing PROXY group; replace #PROXY with your actual group name.
+# Do not overwrite working subscription DNS/TUN. No listener/TUN settings here.
+dns:
+  enable: true
+  enhanced-mode: redir-host
+  respect-rules: true
+  prefer-h3: false
+  default-nameserver:
+    - 223.5.5.5
+  proxy-server-nameserver:
+    - "https://223.5.5.5/dns-query#DIRECT"
+  direct-nameserver:
+    - "https://223.5.5.5/dns-query#DIRECT"
+  direct-nameserver-follow-policy: false
+  nameserver:
+    - "https://1.1.1.1/dns-query#PROXY"
+  nameserver-policy:
+    "+.qq.com": ["https://223.5.5.5/dns-query#DIRECT"]
+    "+.weixin.com": ["https://223.5.5.5/dns-query#DIRECT"]
+    "+.wechat.com": ["https://223.5.5.5/dns-query#DIRECT"]
+    "+.tenpay.com": ["https://223.5.5.5/dns-query#DIRECT"]
+    "+.alipay.com": ["https://223.5.5.5/dns-query#DIRECT"]
+    "+.alipayobjects.com": ["https://223.5.5.5/dns-query#DIRECT"]
+    "+.taobao.com": ["https://223.5.5.5/dns-query#DIRECT"]
+    "+.tmall.com": ["https://223.5.5.5/dns-query#DIRECT"]
+    "+.alicdn.com": ["https://223.5.5.5/dns-query#DIRECT"]
+    "+.bilibili.com": ["https://223.5.5.5/dns-query#DIRECT"]
+    "+.bilivideo.com": ["https://223.5.5.5/dns-query#DIRECT"]
+    "+.biliapi.com": ["https://223.5.5.5/dns-query#DIRECT"]
+    "+.hdslb.com": ["https://223.5.5.5/dns-query#DIRECT"]
+    "+.douyin.com": ["https://223.5.5.5/dns-query#DIRECT"]
+    "+.douyincdn.com": ["https://223.5.5.5/dns-query#DIRECT"]
+    "+.bytedance.com": ["https://223.5.5.5/dns-query#DIRECT"]
+    "+.xiaohongshu.com": ["https://223.5.5.5/dns-query#DIRECT"]
+    "+.xhscdn.com": ["https://223.5.5.5/dns-query#DIRECT"]
+    "+.jd.com": ["https://223.5.5.5/dns-query#DIRECT"]
+    "+.360buyimg.com": ["https://223.5.5.5/dns-query#DIRECT"]
+    "+.meituan.com": ["https://223.5.5.5/dns-query#DIRECT"]
+    "+.meituan.net": ["https://223.5.5.5/dns-query#DIRECT"]
+    "+.dianping.com": ["https://223.5.5.5/dns-query#DIRECT"]
+    "+.12306.cn": ["https://223.5.5.5/dns-query#DIRECT"]
+    "+.zhihu.com": ["https://223.5.5.5/dns-query#DIRECT"]
+    "+.zhimg.com": ["https://223.5.5.5/dns-query#DIRECT"]
+    "+.baidu.com": ["https://223.5.5.5/dns-query#DIRECT"]
+    "+.bdstatic.com": ["https://223.5.5.5/dns-query#DIRECT"]
+    "+.netease.com": ["https://223.5.5.5/dns-query#DIRECT"]
+    "+.163.com": ["https://223.5.5.5/dns-query#DIRECT"]
+    "+.126.com": ["https://223.5.5.5/dns-query#DIRECT"]
+    "+.youku.com": ["https://223.5.5.5/dns-query#DIRECT"]
+    "+.iqiyi.com": ["https://223.5.5.5/dns-query#DIRECT"]
+    "+.cn": ["https://223.5.5.5/dns-query#DIRECT"]
+    "+.openai.com": ["https://1.1.1.1/dns-query#PROXY"]
+    "+.chatgpt.com": ["https://1.1.1.1/dns-query#PROXY"]
+    "+.oaistatic.com": ["https://1.1.1.1/dns-query#PROXY"]
+    "+.oaiusercontent.com": ["https://1.1.1.1/dns-query#PROXY"]
+    "+.google.com": ["https://1.1.1.1/dns-query#PROXY"]
+    "+.googleapis.com": ["https://1.1.1.1/dns-query#PROXY"]
+    "+.gstatic.com": ["https://1.1.1.1/dns-query#PROXY"]
+    "+.youtube.com": ["https://1.1.1.1/dns-query#PROXY"]
+    "+.googlevideo.com": ["https://1.1.1.1/dns-query#PROXY"]
+    "+.ytimg.com": ["https://1.1.1.1/dns-query#PROXY"]
+    "+.instagram.com": ["https://1.1.1.1/dns-query#PROXY"]
+    "+.facebook.com": ["https://1.1.1.1/dns-query#PROXY"]
+    "+.fbcdn.net": ["https://1.1.1.1/dns-query#PROXY"]
+    "+.x.com": ["https://1.1.1.1/dns-query#PROXY"]
+    "+.twitter.com": ["https://1.1.1.1/dns-query#PROXY"]
+    "+.twimg.com": ["https://1.1.1.1/dns-query#PROXY"]
+    "+.t.co": ["https://1.1.1.1/dns-query#PROXY"]
+    "+.github.com": ["https://1.1.1.1/dns-query#PROXY"]
+    "+.githubusercontent.com": ["https://1.1.1.1/dns-query#PROXY"]
+    "+.githubassets.com": ["https://1.1.1.1/dns-query#PROXY"]
+    "+.spotify.com": ["https://1.1.1.1/dns-query#PROXY"]
+    "+.scdn.co": ["https://1.1.1.1/dns-query#PROXY"]
+    "+.discord.com": ["https://1.1.1.1/dns-query#PROXY"]
+    "+.discord.gg": ["https://1.1.1.1/dns-query#PROXY"]
+    "+.discordapp.com": ["https://1.1.1.1/dns-query#PROXY"]
+    "+.telegram.org": ["https://1.1.1.1/dns-query#PROXY"]
+    "+.t.me": ["https://1.1.1.1/dns-query#PROXY"]

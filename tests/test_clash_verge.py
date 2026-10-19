@@ -60,7 +60,7 @@ assert.strictEqual(again.rules.filter(r=>r.startsWith('MATCH,')).length,1);
 
     def test_exact_group_fallback_and_errors(self):
         self.run_js('''
-const config = {'proxy-groups':[
+const config = {proxies:[{name:'node-A',type:'ss'}], 'proxy-groups':[
   {name:'PROXY',type:'select',proxies:['node-A']},
   {name:'My Desktop',type:'select',proxies:['node-A']}
 ]};
@@ -84,14 +84,14 @@ for (const c of [
         self.assertEqual(result.returncode, 0, result.stderr)
         self.run_js('''
 const routing=JSON.parse(fs.readFileSync(ROUTING_PATH,'utf8'));
-const desktop=apply({'proxy-groups':[{name:'PROXY',type:'select'}]});
+const desktop=apply({proxies:[{name:'node-A',type:'ss'}], 'proxy-groups':[{name:'PROXY',type:'select',proxies:['node-A']}]});
 for(const d of routing.proxy_domain_suffixes)
  assert(desktop.rules.includes(`DOMAIN-SUFFIX,${d},PROXY`));
 for(const d of routing.direct_domain_suffixes)
  assert(desktop.rules.includes(`DOMAIN-SUFFIX,${d},DIRECT`));
 const ctx={};vm.runInNewContext(fs.readFileSync(ANDROID_PATH,'utf8'),ctx);
 assert.deepStrictEqual(Array.from(desktop.rules),Array.from(ctx.main({
- 'proxy-groups':[{name:'PROXY',type:'select'}]
+ proxies:[{name:'node-A',type:'ss'}], 'proxy-groups':[{name:'PROXY',type:'select',proxies:['node-A']}]
 }).rules));
 '''.replace('ROUTING_PATH', json.dumps(str(ROOT/'config/routing.json')))
            .replace('ANDROID_PATH', json.dumps(str(ROOT/'dist/flclash-override.js'))))

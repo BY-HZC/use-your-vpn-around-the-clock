@@ -1,6 +1,6 @@
 # iOS 使用教程｜Shadowrocket
 
-> Use Your VPN around the clock v0.3 Beta。规则经过静态检查，本次发布尚未完成真机验证；不同 iOS/Shadowrocket 版本仍可能存在差异。
+> Use Your VPN around the clock v0.4.0 Beta · Seamless Routing。规则经过静态检查，已有有限的 iOS 规则命中记录与使用正常反馈，完整真机验收仍待完成（见 [测试记录](TESTING.md)）；不同 iOS/Shadowrocket 版本仍可能存在差异。
 
 ## 1. 准备工作
 
@@ -53,3 +53,11 @@
 - 不提供 MITM 证书、不解密 HTTPS、不收集用户日志。
 - 默认未匹配流量走 `PROXY`。若代理断开，某些国外请求可能无法访问。
 - 公开反馈问题前，遮蔽个人订阅 URL、token、服务器地址及隐私信息。
+
+## 7. 持续连接、DNS 与恢复
+
+在「配置」路由模式下，国内与国际连接按规则使用不同出口，目标是保持 VPN 开启、无需为微信/QQ、B站、淘宝/支付宝与国际服务反复切换模式。默认仍使用 `dns-server = system`，没有新增未经确认的 DNS 参数。
+
+解析超时或切换 Wi-Fi/蜂窝后异常时，按 [DNS 排查](DNS.md) 区分节点失败、解析失败及缓存影响，再重新发起连接检查 DIRECT / PROXY。IPv6、UDP/QUIC 和连续切换的完整验证步骤见 [TESTING.md](TESTING.md)。
+
+恢复：在「配置」页重新选中使用 USR 前备份的配置，保留原订阅与节点；若自行改过 DNS，恢复其备份并重新连接。静态配置检查不等于此版本已在 iPhone/iPad 上验证。

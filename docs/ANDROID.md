@@ -1,6 +1,6 @@
 # Android 使用教程｜FlClash（Mihomo）
 
-> Use Your VPN around the clock Android Preview v0.3｜简体中文
+> Use Your VPN around the clock Android v0.4.0 Beta · Seamless Routing｜简体中文
 >
 > **推荐安装方式：已有机场订阅 → 导入 FlClash → 粘贴 `flclash-override.js` → 开启 VPN。** 不需要告诉项目作者你的订阅链接。
 >
@@ -51,7 +51,13 @@
 
 ### 自动识别代理组
 
-脚本会优先识别名为 `PROXY` / `Proxy` / `🚀 节点选择` / `节点选择` 等的策略组；找不到时会尝试选择一个可用的订阅策略组。如果机场给出的组命名很特别，请进入最终配置预览确认 `MATCH` 指向了你实际使用的策略组；如果不合适，应调整脚本中 `preferred` 列表或手动选择合适的组。
+两端统一使用 `const USR_PROXY_GROUP = "";`。有且仅有一个合格候选时自动选中；广告、拒绝、直连组、静态空组和无代理出口的组被排除。多个候选会报错，此时将空字符串改为准确组名，例如：
+
+```javascript
+const USR_PROXY_GROUP = "🌐 Global";
+```
+
+保存并重新应用，核对最后一条 `MATCH`。组名不存在或被判定无代理出口时会报错，不会静默改选第一个组。无策略组但有节点/提供者时才新建 `USR-PROXY`（若与节点重名则附加编号）。带过滤器的候选不会自动选中，须核对过滤结果后手动指定。动态提供者尚未加载、过滤器排空、未知组类型可能需要人工检查；脚本不能证明节点在线。包含 DIRECT 的组仍须在客户端选中真实代理节点，切换订阅后也要检查组名。
 
 **重要提醒：** 为了与 iOS 路由逻辑一致，脚本会**替换订阅原有的 `rules` 规则列表**，包括原来可能存在的广告过滤、游戏分流及特殊服务规则；**节点与代理组则保留**。不想覆盖原规则，请先备份订阅并不要使用此覆写脚本。
 
@@ -117,3 +123,11 @@
 - FlClash Releases: https://github.com/chen08209/FlClash/releases/latest
 - Mihomo proxy-providers: https://wiki.metacubex.one/en/config/proxy-providers/
 - blackmatrix7 China rules: https://github.com/blackmatrix7/ios_rule_script/blob/master/rule/Clash/China/README.md
+
+## v0.4.0：持续连接、DNS 与恢复
+
+在规则模式下，国内连接走 DIRECT、国际服务走已选代理组，日常切换 App 不需要反复关闭 VPN。先按 [连续切换测试清单](TESTING.md) 检查微信/QQ、B站、淘宝/支付宝与国际服务；只看到 App 能联网不够，还需核对连接策略。
+
+脚本保留订阅的 DNS 和 TUN，不自动使用可选 DNS。解析超时、IPv6 或 Wi-Fi/蜂窝切换异常时按 [DNS 排查](DNS.md) 区分 DNS 和节点故障，先恢复原设置再比较。
+
+恢复原订阅：在当前订阅「覆写」恢复此前模式/备份脚本（原本为标准模式时选标准），保存并重新应用；核对最终规则已恢复。公开反馈只提供脱敏片段。Node 模拟和内核解析检查不能代替 Android 真机、UDP/QUIC 和 DNS 验证。

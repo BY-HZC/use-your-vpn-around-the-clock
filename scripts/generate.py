@@ -17,8 +17,7 @@ DIST = ROOT / "dist"
 DOMAIN_RE = re.compile(r"^(?=.{1,253}$)[a-z0-9-]+(?:\.[a-z0-9-]+)+$")
 
 
-def load():
-    cfg = json.loads(SRC.read_text(encoding="utf-8"))
+def validate(cfg):
     if cfg["routing"]["default"] != "PROXY":
         raise ValueError("This version must fail closed to PROXY for unmatched traffic")
     domains = []
@@ -32,6 +31,11 @@ def load():
         domains += seq
     if len(domains) != len(set(domains)):
         raise ValueError("Same domain occurs in both PROXY and DIRECT")
+    # Suffix overlaps silently shadow rules even if the exact strings differ.
+    for i, domain in enumerate(domains):
+        for other in domains[i + 1:]:
+            if domain.endswith("." + other) or other.endswith("." + domain):
+                raise ValueError(f"Overlapping domain suffixes: {domain} / {other}")
     for network in cfg["private_ipv4_cidrs"]:
         if ipaddress.ip_network(network).version != 4:
             raise ValueError(f"Expected IPv4 private CIDR: {network}")
@@ -42,6 +46,10 @@ def load():
         if not url.startswith("https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/"):
             raise ValueError(f"Check source URL: {name}")
     return cfg
+
+
+def load():
+    return validate(json.loads(SRC.read_text(encoding="utf-8")))
 
 
 def shadowrocket(cfg):
@@ -154,9 +162,34 @@ def mihomo(cfg, fragment=False):
     return "\n".join(header + base + provider + [''] + rules + [''])
 
 
+def dns_example(cfg):
+    # Opt-in fragment only. Never merged into templates or override scripts.
+    local = "https://223.5.5.5/dns-query#DIRECT"
+    remote = "https://1.1.1.1/dns-query#PROXY"
+    lines = [
+        "# GENERATED optional Mihomo DNS fragment; NOT a standalone profile.",
+        "# Read docs/DNS.md before merging. Mainland-network example, device testing required.",
+        "# Requires an existing PROXY group; replace #PROXY with your actual group name.",
+        "# Do not overwrite working subscription DNS/TUN. No listener/TUN settings here.",
+        "dns:", "  enable: true", "  enhanced-mode: redir-host",
+        "  respect-rules: true", "  prefer-h3: false",
+        "  default-nameserver:", "    - 223.5.5.5",
+        "  proxy-server-nameserver:", f"    - {q(local)}",
+        "  direct-nameserver:", f"    - {q(local)}",
+        "  direct-nameserver-follow-policy: false",
+        "  nameserver:", f"    - {q(remote)}", "  nameserver-policy:",
+    ]
+    for domain in cfg['direct_domain_suffixes'] + (["cn"] if cfg['routing']['china_tld_direct'] else []):
+        lines.append(f"    {q('+.' + domain)}: [{q(local)}]")
+    for domain in cfg['proxy_domain_suffixes']:
+        lines.append(f"    {q('+.' + domain)}: [{q(remote)}]")
+    return "\n".join(lines + [""])
+
+
 def build(cfg):
     return {
         DIST / 'shadowrocket.conf': shadowrocket(cfg),
+        DIST / 'mihomo-dns.optional.yaml': dns_example(cfg),
         DIST / 'mihomo.yaml': mihomo(cfg),
         DIST / 'mihomo-rules.fragment.yaml': mihomo(cfg, fragment=True),
         DIST / 'flclash-override.js': flclash_script(cfg),

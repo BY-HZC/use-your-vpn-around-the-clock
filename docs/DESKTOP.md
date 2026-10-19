@@ -23,9 +23,13 @@
 
 ### 选择代理组
 
-默认 `const USR_PROXY_GROUP = "";` 会自动识别常见组名。必须核对最终 `MATCH` 指向的是你希望使用的代理组。特殊订阅可在本地脚本中将空字符串改为准确组名；不存在时脚本会明确报错，不会静默换组。
+两端统一使用 `const USR_PROXY_GROUP = "";`。有且仅有一个合格候选时自动选中；广告、拒绝、直连组、静态空组和无代理出口的组被排除。多个候选会报错，此时将空字符串改为准确组名，例如：
 
-即使代理组名称含有 PROXY，其当前选项也可能是 DIRECT；请在客户端选择可用代理节点。没有代理组但含节点/提供者时会建立 `USR-PROXY` 选择组；完全没有节点或提供者的空配置会报错。脚本不会凭空获得节点。
+```javascript
+const USR_PROXY_GROUP = "🌐 Global";
+```
+
+保存并重新应用，核对最后一条 `MATCH`。组名不存在或被判定无代理出口时会报错，不会静默改选第一个组。无策略组但有节点/提供者时才新建 `USR-PROXY`（若与节点重名则附加编号）。带过滤器的候选不会自动选中，须核对过滤结果后手动指定。动态提供者尚未加载、过滤器排空、未知组类型可能需要人工检查；脚本不能证明节点在线。包含 DIRECT 的组仍须在客户端选中真实代理节点，切换订阅后也要检查组名。
 
 ## 3. 系统代理和 TUN
 
@@ -69,3 +73,9 @@
 - [官方安装说明](https://www.clashverge.dev/install.html)
 - [扩展配置与脚本、执行顺序及设置优先级](https://www.clashverge.dev/guide/extend.html)
 - [JavaScript main(config) 脚本接口](https://www.clashverge.dev/guide/script.html)
+
+## v0.4.0 Beta · Seamless Routing
+
+规则模式下，国内与国际连接由规则分别选择出口，目标是在 App 间切换时保持 VPN 连接。桌面脚本继续保留 DNS/TUN，Clash Verge Rev 的界面仍需选择规则模式。若国内或国际应用连续切换后异常，先看连接命中和最终节点，再按 [DNS 排查](DNS.md) 检查解析、IPv6 与缓存。
+
+可选 DNS 片段不自动合并，不要覆盖已有可用设置。按第 5 节可恢复原订阅脚本；若手动试用了 DNS 片段，同时恢复 DNS 备份。Windows / macOS 的真实 DNS、UDP/QUIC、休眠唤醒与网络切换仍按 [测试清单](TESTING.md) 验证。

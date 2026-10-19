@@ -3,8 +3,8 @@
 // Paste into the subscription extension script; see docs/DESKTOP.md.
 // Replaces original rules; preserves nodes, groups, DNS and TUN settings.
 // Select Rule mode in the app. Optional: set an exact proxy group below.
+// Optional exact group name. Leave empty only when there is one eligible group.
 const USR_PROXY_GROUP = "";
-
 const USR_RULES = {
   "proxy": [
     "DOMAIN-SUFFIX,openai.com,{POLICY}",
@@ -37,7 +37,6 @@ const USR_RULES = {
   ],
   "direct": [
     "DOMAIN-SUFFIX,qq.com,DIRECT",
-    "DOMAIN-SUFFIX,weixin.qq.com,DIRECT",
     "DOMAIN-SUFFIX,weixin.com,DIRECT",
     "DOMAIN-SUFFIX,wechat.com,DIRECT",
     "DOMAIN-SUFFIX,tenpay.com,DIRECT",
@@ -89,41 +88,93 @@ const USR_RULES = {
   "url": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/China/China_Classical.yaml"
 };
 
+const USR_BUILTINS = ["DIRECT", "REJECT", "REJECT-DROP", "PASS", "COMPATIBLE", "GLOBAL"];
+function usrName(name) {
+  return typeof name === "string" && name.trim() && !/[,\r\n]/.test(name) &&
+    !USR_BUILTINS.includes(name.toUpperCase());
+}
+function usrNode(node) {
+  return node && usrName(node.name) && typeof node.type === "string" &&
+    !["direct", "reject", "reject-drop", "pass", "dns"].includes(node.type.toLowerCase());
+}
+function usrSelect(config) {
+  if (config["proxy-groups"] !== undefined && !Array.isArray(config["proxy-groups"])) {
+    throw new Error("USR: proxy-groups 必须是列表");
+  }
+  const groups = config["proxy-groups"] || [];
+  const nodes = (Array.isArray(config.proxies) ? config.proxies : []).filter(usrNode);
+  const providers = config["proxy-providers"] || {};
+  const providerNames = Object.keys(providers).filter(n => providers[n] &&
+    (["http", "file"].includes(providers[n].type) ||
+     (providers[n].type === "inline" && Array.isArray(providers[n].payload) &&
+      providers[n].payload.some(usrNode))));
+  const nodeNames = nodes.map(n => n.name);
+  const byName = new Map();
+  for (const g of groups) {
+    if (!g || !usrName(g.name) || byName.has(g.name) || nodeNames.includes(g.name)) {
+      throw new Error("USR: 策略组名称无效或重复，请修复订阅");
+    }
+    byName.set(g.name, g);
+  }
+  const excluded = /广告|拦截|屏蔽|拒绝|直连|阻断|\b(?:ad[-_ ]?block|ads?|reject|block|direct|bypass)\b/i;
+  function eligible(g, visiting = new Set()) {
+    if (!g || excluded.test(g.name) || visiting.has(g.name) ||
+        !["select", "url-test", "fallback", "load-balance"].includes(g.type)) return false;
+    const next = new Set(visiting); next.add(g.name);
+    // Provider contents and Mihomo regex filters cannot be resolved here.
+    // Treat them as potential exits; the user must verify loaded nodes in the app.
+    if ((g["include-all"] || g["include-all-providers"]) && providerNames.length) return true;
+    if ((g["include-all"] || g["include-all-proxies"]) && nodeNames.length) return true;
+    if (Array.isArray(g.use) && g.use.some(n => providerNames.includes(n))) return true;
+    return Array.isArray(g.proxies) && g.proxies.some(n =>
+      nodeNames.includes(n) || eligible(byName.get(n), next));
+  }
+  function filtered(g, visiting = new Set()) {
+    if (!g || visiting.has(g.name)) return false;
+    const hasFilter = x => x && ["filter", "exclude-filter", "exclude-type"].some(k => x[k]);
+    const next = new Set(visiting); next.add(g.name);
+    if (hasFilter(g)) return true;
+    const used = (g["include-all"] || g["include-all-providers"]) ? providerNames :
+      (Array.isArray(g.use) ? g.use : []);
+    return used.some(n => hasFilter(providers[n])) ||
+      (Array.isArray(g.proxies) && g.proxies.some(n => filtered(byName.get(n), next)));
+  }
+  if (USR_PROXY_GROUP) {
+    if (!byName.has(USR_PROXY_GROUP)) throw new Error("USR: 指定的代理组不存在，请检查 USR_PROXY_GROUP");
+    if (!eligible(byName.get(USR_PROXY_GROUP))) {
+      throw new Error("USR: 指定组没有可确认的代理出口或属于排除组，请检查 USR_PROXY_GROUP");
+    }
+    return {target: USR_PROXY_GROUP};
+  }
+  if (groups.length) {
+    const candidates = groups.filter(g => eligible(g));
+    if (candidates.length !== 1) {
+      throw new Error("USR: " + (candidates.length ? "存在多个候选代理组: " + candidates.map(g => g.name).join(" / ") :
+        "没有可确认的代理出口") + "；请检查订阅，并手动设置 USR_PROXY_GROUP");
+    }
+    if (filtered(candidates[0])) {
+      throw new Error("USR: 候选组含节点过滤器，无法确认过滤后的出口；请核对节点并手动设置 USR_PROXY_GROUP");
+    }
+    return {target: candidates[0].name};
+  }
+  if (!nodeNames.length && !providerNames.length) throw new Error("USR: 请先导入带有节点的 Mihomo 订阅");
+  let target = "USR-PROXY";
+  for (let i = 2; nodeNames.includes(target); i++) target = "USR-PROXY-" + i;
+  return {target, group: {
+    name: target, type: "select",
+    ...(nodeNames.length ? {proxies: nodeNames} : {}),
+    ...(providerNames.length ? {use: providerNames} : {})
+  }};
+}
+
 function main(config) {
-  if (!config || typeof config !== "object") {
+  if (!config || typeof config !== "object" || Array.isArray(config)) {
     throw new Error("USR: Invalid subscription profile");
   }
-  const groups = Array.isArray(config["proxy-groups"]) ? config["proxy-groups"] : [];
-  const usable = groups.filter(g => g && typeof g.name === "string" && g.name &&
-    !["DIRECT", "REJECT", "PASS", "GLOBAL"].includes(g.name));
-  const names = usable.map(g => g.name);
-  const preferred = ["PROXY", "Proxy", "proxy", "🚀 节点选择", "节点选择", "选择节点", "代理", "🚀 Proxy", "节点切换", "♻️ 自动选择"];
-  if (USR_PROXY_GROUP && !names.includes(USR_PROXY_GROUP)) {
-    throw new Error("USR: 指定的代理组不存在: " + USR_PROXY_GROUP);
-  }
-  let target = USR_PROXY_GROUP || preferred.find(n => names.includes(n));
-  if (!target) {
-    const byName = usable.find(g => /节点|选择|代理|proxy|select|自动|机场/i.test(g.name));
-    const bySelect = usable.find(g => g.type === "select");
-    target = (byName || bySelect || usable[0] || {}).name;
-  }
-
-  // Support subscription profiles with raw proxies/providers but no groups.
-  if (!target) {
-    const nodeNames = (Array.isArray(config.proxies) ? config.proxies : [])
-      .filter(p => p && typeof p.name === "string" && p.name)
-      .map(p => p.name);
-    const providerNames = Object.keys(config["proxy-providers"] || {});
-    if (!nodeNames.length && !providerNames.length) {
-      throw new Error("USR: 请先导入带有节点的 Mihomo 订阅");
-    }
-    target = "USR-PROXY";
-    config["proxy-groups"] = groups.concat([{
-      name: target, type: "select",
-      ...(nodeNames.length ? {proxies: nodeNames} : {}),
-      ...(providerNames.length ? {use: providerNames} : {})
-    }]);
-  }
+  const selection = usrSelect(config);
+  const target = selection.target;
+  // No mutation until proxy selection has succeeded.
+  if (selection.group) config["proxy-groups"] = [selection.group];
 
   config["rule-providers"] = config["rule-providers"] || {};
   config["rule-providers"]["usr-china-classical"] = {
@@ -132,7 +183,7 @@ function main(config) {
     path: "./ruleset/usr-china-classical.yaml", interval: 86400
   };
 
-  const proxyRules = USR_RULES.proxy.map(r => r.replace("{POLICY}", target));
+  const proxyRules = USR_RULES.proxy.map(r => r.replace("{POLICY}", () => target));
   // Replace existing subscription routing (including its ad-blocking rules).
   config.rules = [
     ...USR_RULES.private,
